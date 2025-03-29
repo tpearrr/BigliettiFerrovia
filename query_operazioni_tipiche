@@ -1,27 +1,27 @@
 -- Esempio di 5 query di operazioni tipiche
+
 -- 1: Ricerca biglietti disponibili per una tratta specifica
 SELECT * FROM Biglietto
-WHERE ID_Tratta = 1 AND Data_Acquisto >= NOW();
+WHERE ID_Tratta = 1;
 
 -- 2: Storico prenotazioni di un cliente
-SELECT * FROM Prenotazione P
-JOIN Biglietto B ON P.ID_Biglietto = B.ID_Biglietto
+SELECT * FROM Prenotazione AS P
+JOIN Biglietto AS B ON P.ID_Biglietto = B.ID_Biglietto
 WHERE P.ID_Cliente = 1;
 
 -- 3: Verifica validità di un biglietto
-SELECT * FROM Biglietto
-WHERE ID_Biglietto = 1 AND Data_Acquisto >= NOW();
+SELECT * FROM Biglietto AS B
+WHERE B.ID_Biglietto = 1 AND B.Data_Acquisto >= '2025-01-01';
 
 -- 4: Visualizzazione di tutte le tratte disponibili
 SELECT T.ID_Tratta, S1.Citta AS Stazione_Partenza, S2.Citta AS Stazione_Arrivo, T.Durata
-FROM Tratta T
-JOIN Stazione S1 ON T.ID_Stazione_Partenza = S1.ID_Stazione
-JOIN Stazione S2 ON T.ID_Stazione_Arrivo = S2.ID_Stazione
-JOIN Treno Tr ON T.ID_Treno = Tr.ID_Treno;
+FROM Tratta AS T
+JOIN Stazione AS S1 ON T.ID_Stazione_Partenza = S1.ID_Stazione
+JOIN Stazione AS S2 ON T.ID_Stazione_Arrivo = S2.ID_Stazione;
 
 -- 5: Statistica di utilizzo (numero di biglietti venduti per tratta)
 SELECT T.ID_Tratta, COUNT(B.ID_Biglietto) AS Biglietti_Venduti
-FROM Biglietto B
-JOIN Tratta T ON B.ID_Tratta = T.ID_Tratta
+FROM Biglietto AS B
+JOIN Tratta AS T ON B.ID_Tratta = T.ID_Tratta
 GROUP BY T.ID_Tratta;
 
