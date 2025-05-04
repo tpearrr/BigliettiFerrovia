@@ -1,28 +1,78 @@
 -- Esempio di 5 query di operazioni tipiche
 
--- 1: Ricerca biglietti disponibili per una tratta specifica
-SELECT * FROM Biglietto
-WHERE ID_Tratta = 1;
+-- 1 query
+SELECT 
+    B.ID_Biglietto,
+    C.Nome,
+    C.Cognome,
+    C.ID_Cliente,
+    B.Prezzo,
+    B.Data_Acquisto,
+    SP.Nome AS Stazione_Partenza,
+    SA.Nome AS Stazione_Arrivo,
+    T.Tipo_Treno
+FROM BIGLIETTO B
+JOIN CLIENTE C ON B.ID_Cliente = C.ID_Cliente
+JOIN TRATTA TR ON B.ID_Tratta = TR.ID_Tratta
+JOIN STAZIONE SP ON TR.ID_Stazione_Partenza = SP.ID_Stazione
+JOIN STAZIONE SA ON TR.ID_Stazione_Arrivo = SA.ID_Stazione
+JOIN TRENO T ON B.ID_Treno = T.ID_Treno
+ORDER BY B.ID_Biglietto ASC;
 
--- 2: Storico prenotazioni di un cliente
-SELECT * FROM Prenotazione AS P
-JOIN Biglietto AS B ON P.ID_Biglietto = B.ID_Biglietto
-WHERE P.ID_Cliente = 1;
+-- 2 query
+SELECT 
+    B.ID_Biglietto,
+    C.ID_Cliente,
+    C.Nome AS Nome_Cliente,
+    C.Cognome AS Cognome_Cliente,
+    B.Data_Acquisto,
+    B.Prezzo,
+    T.Tipo_Treno,
+    T.Orario,
+    SP.Nome AS Stazione_Partenza,
+    SA.Nome AS Stazione_Arrivo
+FROM BIGLIETTO B
+JOIN CLIENTE C ON B.ID_Cliente = C.ID_Cliente
+JOIN TRENO T ON B.ID_Treno = T.ID_Treno
+JOIN TRATTA TR ON B.ID_Tratta = TR.ID_Tratta
+JOIN STAZIONE SP ON TR.ID_Stazione_Partenza = SP.ID_Stazione
+JOIN STAZIONE SA ON TR.ID_Stazione_Arrivo = SA.ID_Stazione
+WHERE B.ID_Cliente = 1
+ORDER BY B.ID_Biglietto DESC;
 
--- 3: ID e Prezzo dei biglietti acquistati da un determinato cliente
-SELECT B.ID_Biglietto AS ID_Biglietto, B.Prezzo AS Prezzo
-FROM Biglietto AS B
-WHERE B.ID_Cliente = 1;
+-- 3 query
+SELECT 
+    TR.ID_Tratta,
+    SP.Nome AS Stazione_Partenza,
+    SA.Nome AS Stazione_Arrivo,
+    COUNT(B.ID_Biglietto) AS Biglietti_Venduti
+FROM TRATTA TR
+JOIN STAZIONE SP ON TR.ID_Stazione_Partenza = SP.ID_Stazione
+JOIN STAZIONE SA ON TR.ID_Stazione_Arrivo = SA.ID_Stazione
+LEFT JOIN BIGLIETTO B ON TR.ID_Tratta = B.ID_Tratta
+GROUP BY TR.ID_Tratta, SP.Nome, SA.Nome
+ORDER BY Biglietti_Venduti DESC;
 
--- 4: Visualizzazione di tutte le tratte disponibili
-SELECT T.ID_Tratta, S1.Citta AS Stazione_Partenza, S2.Citta AS Stazione_Arrivo, T.Durata
-FROM Tratta AS T
-JOIN Stazione AS S1 ON T.ID_Stazione_Partenza = S1.ID_Stazione
-JOIN Stazione AS S2 ON T.ID_Stazione_Arrivo = S2.ID_Stazione;
+-- 4 query
+SELECT 
+    T.Tipo_Treno,
+    COUNT(B.ID_Biglietto) AS Biglietti_Venduti,
+    AVG(B.Prezzo) AS Prezzo_Medio
+FROM BIGLIETTO B
+JOIN TRENO T ON B.ID_Treno = T.ID_Treno
+GROUP BY T.Tipo_Treno;
 
--- 5: Numero di biglietti venduti per tratta ferroviaria
-SELECT T.ID_Tratta, COUNT(B.ID_Biglietto) AS Biglietti_Venduti
-FROM Biglietto AS B
-JOIN Tratta AS T ON B.ID_Tratta = T.ID_Tratta
-GROUP BY T.ID_Tratta;
-
+-- 5 query
+SELECT 
+    T.ID_Treno,
+    T.Tipo_Treno,
+    TR.ID_Tratta,
+    SP.Nome AS Stazione_Partenza,
+    SA.Nome AS Stazione_Arrivo,
+    TR.Durata
+FROM TRENO T
+JOIN TRATTA TR ON T.ID_Treno = TR.ID_Treno
+JOIN STAZIONE SP ON TR.ID_Stazione_Partenza = SP.ID_Stazione
+JOIN STAZIONE SA ON TR.ID_Stazione_Arrivo = SA.ID_Stazione
+WHERE T.ID_Treno = 1
+ORDER BY TR.ID_Tratta;
