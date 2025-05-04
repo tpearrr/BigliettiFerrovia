@@ -1,69 +1,55 @@
-USE SistemaBigliettiFerroviari;
--- Popolamento delle tabelle con dati di esempio (Solo per treni regionali)
--- Inserimento stazioni
-INSERT INTO Stazione (Citta, Nome) VALUES ('Venezia', 'Venezia Santa Lucia');
-INSERT INTO Stazione (Citta, Nome) VALUES ('Padova', 'Padova Centrale');
-INSERT INTO Stazione (Citta, Nome) VALUES ('Verona', 'Verona Porta Nuova');
-INSERT INTO Stazione (Citta, Nome) VALUES ('Treviso', 'Treviso Centrale');
-INSERT INTO Stazione (Citta, Nome) VALUES ('Vicenza', 'Vicenza Centrale');
-INSERT INTO Stazione (Citta, Nome) VALUES ('Belluno', 'Belluno Centrale');
-INSERT INTO Stazione (Citta, Nome) VALUES ('Rovigo', 'Rovigo Centrale');
+-- Inserimento dati tabella CLIENTE
+INSERT INTO CLIENTE (Nome, Cognome, Email, Cellulare) VALUES
+('Mario', 'Rossi', 'mario.rossi@email.com', '3331234567'),
+('Lucia', 'Verdi', 'lucia.verdi@email.com', '3347654321'),
+('Giulia', 'Bianchi', 'giulia.bianchi@email.com', '3391122334'),
+('Andrea', 'Neri', 'andrea.neri@email.com', '3369988776'),
+('Paolo', 'Conti', 'paolo.conti@email.com', '3355544332');
 
--- Inserimento treni
-INSERT INTO Treno (Tipo_Treno, Capacita) VALUES ('Regionale', 200);
-INSERT INTO Treno (Tipo_Treno, Capacita) VALUES ('Alta Velocità', 300);
+-- Inserimento dati tabella STAZIONE
+INSERT INTO STAZIONE (Nome, Città) VALUES
+('Verona Porta Nuova', 'Verona'),
+('Padova Centrale', 'Padova'),
+('Vicenza', 'Vicenza'),
+('Mestre', 'Venezia'),
+('Treviso Centrale', 'Treviso'),
+('Rovigo', 'Rovigo');
 
--- Inserimento tratte per treni regionali
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (1, 3, 1, '02:00:00');  -- Venezia -> Verona
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (1, 6, 1, '02:30:00');  -- Venezia -> Belluno
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (2, 3, 1, '01:30:00');  -- Padova -> Verona
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (5, 7, 1, '01:40:00');  -- Vicenza -> Rovigo
+-- Inserimento dati tabella TRENO
+INSERT INTO TRENO (Orario, Capacità, Tipo_Treno) VALUES
+('08:00:00', 300, 'Regionale'),
+('09:30:00', 250, 'Diretto'),
+('11:00:00', 200, 'Regionale'),
+('14:15:00', 180, 'Diretto');
 
--- Inserimento tratte per treni alta velocità
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (1, 3, 2, '01:00:00');  -- Venezia -> Verona
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (1, 6, 2, '01:15:00');  -- Venezia -> Belluno
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (2, 3, 2, '00:45:00');  -- Padova -> Verona
-INSERT INTO Tratta (ID_Stazione_Partenza, ID_Stazione_Arrivo, ID_Treno, Durata) VALUES (5, 7, 2, '00:50:00');  -- Vicenza -> Rovigo
+-- Inserimento dati tabella TRATTA
+-- ID Stazioni da 1 a 6
+-- Verona = 1, Padova = 2, Vicenza = 3, Mestre = 4, Treviso = 5, Rovigo = 6
+INSERT INTO TRATTA (Durata, ID_Treno, ID_Stazione_Partenza, ID_Stazione_Arrivo) VALUES
+('01:30:00', 1, 1, 2),  -- Verona → Padova
+('01:00:00', 2, 2, 4),  -- Padova → Mestre
+('00:50:00', 3, 1, 3),  -- Verona → Vicenza
+('01:20:00', 4, 3, 5),  -- Vicenza → Treviso
+('01:10:00', 1, 4, 6),  -- Mestre → Rovigo
+('01:00:00', 1, 4, 1);  -- Mestre → Verona
 
--- Inserimento scali predefiniti per treni regionali
-INSERT INTO Scalo (ID_Tratta, ID_Stazione, Ordine, Tempo_Sosta) VALUES (1, 2, 1, '00:10:00'); -- Scalo a Padova
-INSERT INTO Scalo (ID_Tratta, ID_Stazione, Ordine, Tempo_Sosta) VALUES (1, 5, 2, '00:05:00'); -- Scalo a Vicenza
-INSERT INTO Scalo (ID_Tratta, ID_Stazione, Ordine, Tempo_Sosta) VALUES (2, 4, 1, '00:10:00'); -- Scalo a Treviso
-INSERT INTO Scalo (ID_Tratta, ID_Stazione, Ordine, Tempo_Sosta) VALUES (3, 5, 1, '00:08:00'); -- Scalo a Vicenza
-INSERT INTO Scalo (ID_Tratta, ID_Stazione, Ordine, Tempo_Sosta) VALUES (4, 2, 1, '00:15:00'); -- Scalo a Padova
+-- Inserimento dati tabella SCALO
+-- Tratta 1: Verona → Padova (scalo a Vicenza)
+-- Tratta 2: Padova → Mestre (scalo a Rovigo)
+-- Tratta 4: Vicenza → Treviso (scalo a Padova)
+INSERT INTO SCALO (ID_Tratta, ID_Stazione, Ordine, Tempo_sosta) VALUES
+(1, 3, 1, '00:05:00'), -- Vicenza
+(2, 6, 1, '00:03:00'), -- Rovigo
+(4, 2, 1, '00:04:00'); -- Padova
 
--- Inserimento Clienti
-INSERT INTO Cliente (Nome, Cognome, Email, Cellulare)
-VALUES ('Mario', 'Rossi', 'mario.rossi@email.com', '1234567890');
-
-INSERT INTO Cliente (Nome, Cognome, Email, Cellulare)
-VALUES ('Luca', 'Bianchi', 'luca.bianchi@email.com', '0987654321');
-
-INSERT INTO Cliente (Nome, Cognome, Email, Cellulare)
-VALUES ('Andrea', 'Verdi', 'andrea.verdi@email.com', '3456789012');
-
--- Inserimento Biglietti
-INSERT INTO Biglietto (ID_Tratta, ID_Cliente, Prezzo, Data_Acquisto)
-VALUES (1, 1, 30.00, '2025-03-10');
-
-INSERT INTO Biglietto (ID_Tratta, ID_Cliente, Prezzo, Data_Acquisto)
-VALUES (1, 2, 15.50, '2025-03-12');
-
-INSERT INTO Biglietto (ID_Tratta, ID_Cliente, Prezzo, Data_Acquisto)
-VALUES (2, 1, 15.50, '2025-03-14');
-
-INSERT INTO Biglietto (ID_Tratta, ID_Cliente, Prezzo, Data_Acquisto)
-VALUES (2, 2, 30.00, '2025-03-16');
-
--- Inserimento Prenotazione
-INSERT INTO Prenotazione (ID_Biglietto, ID_Cliente)
-VALUES (1, 1);
-
-INSERT INTO Prenotazione (ID_Biglietto, ID_Cliente)
-VALUES (2, 1);
-
-INSERT INTO Prenotazione (ID_Biglietto, ID_Cliente)
-VALUES (1, 2);
-
-INSERT INTO Prenotazione (ID_Biglietto, ID_Cliente)
-VALUES (2, 2);
+-- Inserimento dati tabella BIGLIETTO
+-- ID Cliente da 1 a 5, ID Tratte da 1 a 5, ID Treni da 1 a 4
+INSERT INTO BIGLIETTO (Prezzo, Data_Acquisto, ID_Cliente, ID_Tratta, ID_Treno) VALUES
+(12.50, '2025-05-01', 1, 1, 1),
+(9.00,  '2025-05-01', 2, 2, 2),
+(7.50,  '2025-05-02', 3, 3, 3),
+(10.00, '2025-05-02', 4, 4, 4),
+(6.00,  '2025-05-03', 5, 1, 1),
+(11.50, '2025-05-03', 2, 5, 1),
+(8.00,  '2025-05-04', 1, 2, 2),
+(5.50,  '2025-05-04', 3, 3, 3);
