@@ -1,0 +1,77 @@
+-- CREAZIONE TABELLA CLIENTE
+CREATE TABLE CLIENTE (
+    ID_Cliente INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(50) NOT NULL,
+    Cognome VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Cellulare VARCHAR(15) NOT NULL CHECK (LENGTH(Cellulare) >= 8)
+);
+
+-- CREAZIONE TABELLA TRENO
+CREATE TABLE TRENO (
+    ID_Treno INT AUTO_INCREMENT PRIMARY KEY,
+    Orario TIME NOT NULL,
+    Capacità INT NOT NULL CHECK (Capacità > 0),
+    Tipo_Treno VARCHAR(10) NOT NULL CHECK (Tipo_Treno IN ('Regionale', 'Diretto'))
+);
+
+-- CREAZIONE TABELLA STAZIONE
+CREATE TABLE STAZIONE (
+    ID_Stazione INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Città VARCHAR(100) NOT NULL
+);
+
+-- CREAZIONE TABELLA TRATTA
+CREATE TABLE TRATTA (
+    ID_Tratta INT AUTO_INCREMENT PRIMARY KEY,
+    Durata TIME NOT NULL,
+    ID_Treno INT NOT NULL,
+    ID_Stazione_Partenza INT NOT NULL,
+    ID_Stazione_Arrivo INT NOT NULL,
+    FOREIGN KEY (ID_Treno) REFERENCES TRENO(ID_Treno),
+    FOREIGN KEY (ID_Stazione_Partenza) REFERENCES STAZIONE(ID_Stazione),
+    FOREIGN KEY (ID_Stazione_Arrivo) REFERENCES STAZIONE(ID_Stazione),
+    CHECK (ID_Stazione_Partenza <> ID_Stazione_Arrivo)
+);
+
+-- CREAZIONE TABELLA SCALO
+CREATE TABLE SCALO (
+    ID_Scalo INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Tratta INT NOT NULL,
+    ID_Stazione INT NOT NULL,
+    Ordine INT NOT NULL CHECK (Ordine > 0),
+    Tempo_sosta TIME NOT NULL,
+    FOREIGN KEY (ID_Tratta) REFERENCES TRATTA(ID_Tratta),
+    FOREIGN KEY (ID_Stazione) REFERENCES STAZIONE(ID_Stazione)
+);
+
+-- CREAZIONE TABELLA BIGLIETTO 
+CREATE TABLE BIGLIETTO (
+    ID_Biglietto INT AUTO_INCREMENT PRIMARY KEY,
+    Prezzo DECIMAL(7,2) NOT NULL CHECK (Prezzo >= 0),
+    Data_Acquisto DATE NOT NULL,
+    ID_Cliente INT NOT NULL,
+    ID_Tratta INT NOT NULL,
+    ID_Treno INT NOT NULL,
+    FOREIGN KEY (ID_Cliente) REFERENCES CLIENTE(ID_Cliente),
+    FOREIGN KEY (ID_Tratta) REFERENCES TRATTA(ID_Tratta),
+    FOREIGN KEY (ID_Treno) REFERENCES TRENO(ID_Treno)
+);
+
+ALTER TABLE CLIENTE ADD INDEX idx_cliente_cognome (Cognome);
+ALTER TABLE CLIENTE ADD INDEX idx_cliente_email (Email);
+
+ALTER TABLE BIGLIETTO ADD INDEX idx_biglietto_cliente (ID_Cliente);
+ALTER TABLE BIGLIETTO ADD INDEX idx_biglietto_treno (ID_Treno);
+ALTER TABLE BIGLIETTO ADD INDEX idx_biglietto_tratta (ID_Tratta);
+
+ALTER TABLE TRENO ADD INDEX idx_treno_tipo (Tipo_Treno);
+
+ALTER TABLE TRATTA ADD INDEX idx_tratta_partenza (ID_Stazione_Partenza);
+ALTER TABLE TRATTA ADD INDEX idx_tratta_arrivo (ID_Stazione_Arrivo);
+
+ALTER TABLE STAZIONE ADD INDEX idx_stazione_nome (Nome);
+
+ALTER TABLE SCALO ADD INDEX idx_scalo_tratta (ID_Tratta);
+ALTER TABLE SCALO ADD INDEX idx_scalo_stazione (ID_Stazione);
